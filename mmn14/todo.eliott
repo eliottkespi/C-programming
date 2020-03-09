@@ -1,5 +1,4 @@
 bug!!!!!
-if both operands are register or pointer to register, we count only 1 instruction word!
 
 
 todo:
