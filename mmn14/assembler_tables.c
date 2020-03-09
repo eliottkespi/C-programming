@@ -38,6 +38,10 @@ int add_to_symbol_table(char * name, int value, symbol_type type, symbol_locatio
 		return -1;
 	}
 	
+	/* checking that the no other symbol exists with same name */
+	if (is_a_symbol(name))
+		return -2;
+
 	/* keeping name into a dynamicaly allocated array of char */
 	strcpy(new_name, name);
 
