@@ -289,6 +289,28 @@ int do_first_run(FILE * fd_input)
 				{
 					if (add_to_symbol_table(label_name, IC, CODE, UNKNOWN) == ZERO)
 					{
+						
+						/* checking special case were using 2 operands with addressing method - direct register (ex: r0) or indirect register (ex: *r0) */
+						if (instruction_words == 3)
+						{
+							/* chunk of line will be the rest of the line (so 2 operands) */
+							chunk_of_line = chunk_of_line + strlen(chunk_of_line) +1; /* +1 for the \0 */
+
+							/* keep the 1st operand in chunk_of_line */
+							chunk_of_line = strtok(chunk_of_line, ",");
+							remove_spaces(chunk_of_line);
+
+							if ((is_a_register(chunk_of_line)) || (((chunk_of_line[0] == '*') && (is_a_register(++chunk_of_line)))))
+							{
+								/* keep the 2nd operand in chunk_of_line */
+								chunk_of_line = strtok(NULL, "\0");
+								remove_spaces(chunk_of_line);
+
+								if ((is_a_register(chunk_of_line)) || (((chunk_of_line[0] == '*') && (is_a_register(++chunk_of_line)))))
+									instruction_words--;
+							}
+						} /* end of special case */
+						
 						IC += instruction_words;
 					}
 					else
@@ -451,6 +473,28 @@ int do_first_run(FILE * fd_input)
 		}
 		else if ((instruction_words = count_instruction_words(chunk_of_line)) >= ZERO) /* instruction - just add the number of words to keep in memory */
 		{
+
+			/* checking special case were using 2 operands with addressing method - direct register (ex: r0) or indirect register (ex: *r0) */
+			if (instruction_words == 3)
+			{
+				/* chunk of line will be the rest of the line (so 2 operands) */
+				chunk_of_line = chunk_of_line + strlen(chunk_of_line) +1; /* +1 for the \0 */
+
+				/* keep the 1st operand in chunk_of_line */
+				chunk_of_line = strtok(chunk_of_line, ",");
+				remove_spaces(chunk_of_line);
+
+				if ((is_a_register(chunk_of_line)) || (((chunk_of_line[0] == '*') && (is_a_register(++chunk_of_line)))))
+				{
+					/* keep the 2nd operand in chunk_of_line */
+					chunk_of_line = strtok(NULL, "\0");
+					remove_spaces(chunk_of_line);
+
+					if ((is_a_register(chunk_of_line)) || (((chunk_of_line[0] == '*') && (is_a_register(++chunk_of_line)))))
+						instruction_words--;
+				}
+			} /* end of special case */
+
 			IC += instruction_words;
 		}
 		else /* not a valid start of line */

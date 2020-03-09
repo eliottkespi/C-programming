@@ -1,0 +1,63 @@
+DEBUG - -------------------------------------------------- 
+DEBUG - Printing the symbol table: 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 L3 
+DEBUG - Value:		 0 
+DEBUG - Type:		 0 
+DEBUG - Location:	 1 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 K 
+DEBUG - Value:		 140 
+DEBUG - Type:		 1 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 LIST 
+DEBUG - Value:		 137 
+DEBUG - Type:		 1 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 STR 
+DEBUG - Value:		 132 
+DEBUG - Type:		 1 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 END 
+DEBUG - Value:		 131 
+DEBUG - Type:		 0 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 LOOP 
+DEBUG - Value:		 105 
+DEBUG - Type:		 0 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 MAIN 
+DEBUG - Value:		 100 
+DEBUG - Type:		 0 
+DEBUG - Location:	 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - Name:		 fn1 
+DEBUG - Value:		 0 
+DEBUG - Type:		 0 
+DEBUG - Location:	 1 
+DEBUG - -------------------------------------------------- 
+DEBUG - Printing data table : 
+DEBUG - -------------------------------------------------- 
+DEBUG - 0 97 
+DEBUG - -------------------------------------------------- 
+DEBUG - 1 98 
+DEBUG - -------------------------------------------------- 
+DEBUG - 2 99 
+DEBUG - -------------------------------------------------- 
+DEBUG - 3 100 
+DEBUG - -------------------------------------------------- 
+DEBUG - 4 0 
+DEBUG - -------------------------------------------------- 
+DEBUG - 5 6 
+DEBUG - -------------------------------------------------- 
+DEBUG - 6 9 
+DEBUG - -------------------------------------------------- 
+DEBUG - 7 -100 
+DEBUG - -------------------------------------------------- 
+DEBUG - 8 31 
+DEBUG - -------------------------------------------------- 

@@ -86,17 +86,18 @@ int is_valid_label(char str[])
 /* check if the given string is a register name (r0, r1, ... , r7) */
 int is_a_register(char str[])
 {
-	if (str[ZERO] == 'r')
-		if ((str[1] == '0') ||
-		(str[1] == '1') ||
-                (str[1] == '2') ||
-                (str[1] == '3') ||
-                (str[1] == '4') ||
-                (str[1] == '5') ||
-                (str[1] == '6') ||
-                (str[1] == '7'))
-			if (str[2] == '\0')
-				return 1;
+	if (str != NULL)
+		if (str[ZERO] == 'r')
+			if ((str[1] == '0') ||
+			(str[1] == '1') ||
+			(str[1] == '2') ||
+			(str[1] == '3') ||
+			(str[1] == '4') ||
+			(str[1] == '5') ||
+			(str[1] == '6') ||
+			(str[1] == '7'))
+				if (str[2] == '\0')
+					return 1;
 	return 0;
 }
 
@@ -176,6 +177,7 @@ int count_instruction_words(char str[])
 	int num_of_operand_expected = -1;
 	int i;
 	char * chunk_of_line;
+	
 	
 	/* catch the first word of the instruction */	
 	chunk_of_line = strtok(str, " ");
