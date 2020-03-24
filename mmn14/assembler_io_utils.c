@@ -70,17 +70,17 @@ int is_valid_label(char str[])
 
 	/* valid label is not already initialized */
 	if (is_a_symbol(str))
-		return 0;
+		return ZERO;
 
 	/* valid label is not a register name */
 	if (is_a_register(str))
-		return 0;
+		return ZERO;
 
 	/* valid label is not an operation name */
 	if (is_an_operation_name(str))
-		return 0;
+		return ZERO;
 	
-	return 1;
+	return ONE;
 }
 
 /* check if the given string is a register name (r0, r1, ... , r7) */
@@ -97,8 +97,17 @@ int is_a_register(char str[])
 			(str[1] == '6') ||
 			(str[1] == '7'))
 				if (str[2] == '\0')
-					return 1;
-	return 0;
+					return ONE;
+	return ZERO;
+}
+
+/* checks if the given string is a number (#2 or #87...) */
+int is_a_number(char str[])
+{
+	if (str != NULL)
+		if (str[ZERO] == '#')
+			return ONE;
+	return ZERO;
 }
 
 /* check if the given string is a valid list of elements means int values sperated by ','
@@ -107,12 +116,14 @@ int is_a_register(char str[])
 */
 int validate_list_of_elements(char str[])
 {
-	int elements_found = 0;
-	int i = 0;
+	int elements_found = ZERO;
+	int i = ZERO;
 	int num_started = NO;
 	
-	for(i = 0; str[i] != '\0'; i++)
+	/*iterate the whole string*/
+	for(i = ZERO; str[i] != '\0'; i++)
 	{
+		/*if string start with '+' or '-'*/
 		if((str[i] == '+') ||  (str[i] == '-'))
 		{
 			if (num_started == YES)
@@ -122,8 +133,12 @@ int validate_list_of_elements(char str[])
 			}
 			num_started = YES;
 		}
+		
+		/*if number only*/
 		else if(isdigit(str[i]))
 			num_started = YES;
+		
+		/*if new element*/
 		else if (str[i] == ',')
 		{
 			if (num_started == NO) /* 2 ',' in a row case */
@@ -136,6 +151,8 @@ int validate_list_of_elements(char str[])
 			elements_found++;
 			num_started = NO;
 		}
+		
+		/*invalid elements*/
 		else
 		{
 			elements_found = -1;
@@ -148,8 +165,8 @@ int validate_list_of_elements(char str[])
 /* remove spaces from the given string */
 void remove_spaces(char *  str_trimmed)
 {
-	/* declare initialize and copy str_trimmed into str_untrimmed */
-	char * str_untrimmed = (char *) malloc(strlen(str_trimmed) + 1);
+	/* declare initialize and copy str_trimmed into str_untrimmed + ONE For '\0'*/
+	char * str_untrimmed = (char *) malloc(strlen(str_trimmed) + ONE);
 	char * str_head_pointer = str_untrimmed;
 	strcpy(str_untrimmed, str_trimmed);
 
@@ -182,7 +199,7 @@ int count_instruction_words(char str[])
 	/* catch the first word of the instruction */	
 	chunk_of_line = strtok(str, " ");
 
-	for(i = 0; i < NUM_OF_OPCODE && num_of_operand_expected != ZERO; i++)
+	for(i = ZERO; i < NUM_OF_OPCODE && num_of_operand_expected != ZERO; i++)
 	{
 		if (strcmp(opcodes_table[i].name, chunk_of_line) == ZERO)
 		{
@@ -200,12 +217,12 @@ int is_blank(char str[])
 	int i;
 
 	if (str == NULL)
-		return 1;
+		return ONE;
 
-	for(i = 0; i < strlen(str) ; i++)
+	for(i = ZERO; i < strlen(str) ; i++)
 		if ((str[i] != ' ') && (str[i] != '\t') && (str[i] != '\n'))
-			return 0;
-	return 1;
+			return ZERO;
+	return ONE;
 }
 
 /* is_comment checks if the string given as parameter starts by a ';' */
@@ -213,14 +230,14 @@ int is_comment(char str[])
 {
 	int i;
 
-	for(i = 0; i < strlen(str) ; i++) 
+	for(i = ZERO; i < strlen(str) ; i++) 
 		if ((str[i] == ' ') || (str[i] == '\t') || (str[i] == '\n'))
 			; /* do nothing */
 		else if (str[i] == ';')
-			return 1;
+			return ONE;
 		else
-			return 0;
-	return 0;
+			return ZERO;
+	return ZERO;
 }
 
 /* remove the first spaces from a given string */
@@ -229,4 +246,37 @@ char * remove_leading_spaces(char * str)
 	while(isspace(* str))
 		str++;
 	return str;
+}
+
+/* checks if the given string is a number */
+int is_valid_number(char * str)
+{
+	int i=ZERO;
+	/*checks if the number starts with '#'*/
+	if(str[ZERO]=='#')
+		i++;
+	else
+		return ZERO;
+	/*if the number starts with '-', ignore it*/
+	if(str[i]=='-')
+			i++;
+	
+	/*for each character of the string, checks if it's a digit*/
+	for (; i<strlen(str); i++)	
+		if (!isdigit(str[i]))
+			return ZERO;
+	return ONE;
+}
+
+/* checks if the given number (as a string) is in the limits of 12bit number */
+int is_num_in_limit(char * str)
+{	
+	short int num;
+	/*Seperates the number from the '#'*/
+	num = (short int)atoi(strtok(str,"#"));
+	
+	/*checks if the number in limits of 12 bin number*/
+	if((num<=MAX_12BIT_NUM)&&(num>=MIN_12BIT_NUM))
+		return ONE;
+	return ZERO;
 }

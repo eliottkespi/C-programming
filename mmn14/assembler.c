@@ -14,9 +14,9 @@ int main(int argc, char * argv[])
 	/* iterate over every argument */
 	for (file_index = 1; file_index < argc; file_index++)
 	{
-		/* adding the ".as" suffix to the argument */
-		current_filename = (char *)malloc((strlen(argv[file_index]) + IN_FILE_SUFFIX_SIZE) * sizeof(char)); 
-		strcat(current_filename, argv[file_index]);
+		/* adding the ".as" suffix to the argument + ONE for '\0'*/
+		current_filename = (char *)malloc((strlen(argv[file_index]) + IN_FILE_SUFFIX_SIZE+ONE) * sizeof(char)); 
+		strcpy(current_filename, argv[file_index]);
 		strcat(current_filename, IN_FILE_SUFFIX);
 
 		/* open file */
@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 		}
 		
 		/* start assembling this file */
-		do_assembler(fd_input);
+		do_assembler(fd_input,argv[file_index]);
 
 		/* free dynamically allocated curretn_filename and close file */
 		free(current_filename);

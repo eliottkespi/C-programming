@@ -3,7 +3,7 @@
 	 	 	; haha
 						
 
- 
+
 
  		DATA0to10: .data 1,2,43,-21,+222,-432,-43,-1232,99,0
 STR10to20: 	 	 	.string "abcdefghi"
@@ -19,3 +19,20 @@ add 	 #1 	 , 	 	r0
 .entry  	OTHEROTHERLABELSSSSS
  	 	.extern BLABLASSSS
 DATA3:  	 	.data 1
+
+
+BLABLA: stop
+
+rts r6,#7
+
+lea #7,r2
+
+cmp r3,#-6000
+
+cmp r3,#5000
+
+rts r3,kloop
+
+
+
+

@@ -5,44 +5,56 @@
 	*.int
 	*.ext
 */
-void do_assembler(FILE * fd_input)
+void do_assembler(FILE * fd_input, char * file_name)
 {
-	int error_counter = 0;
-
+	error_counter = ZERO;
+	
 	/* images/table (re)initialization */
 	instruction_image = NULL;
 	data_image = NULL;
 	symbol_table = NULL;
+	external_table = NULL;
 
 	/* counters (re)initialization */
 	IC = START_IC_VALUE; /* instruction counter */
-	DC = 0; /* data counter */
+	DC = ZERO; /* data counter */
 
 	/* do run 1 run 2 */
-	error_counter += do_first_run(fd_input);
+	do_first_run(fd_input);
+	do_second_run(fd_input);
 
-	print_symbol_table();
-	print_image(DATA_TABLE_TYPE);
-
-	/* print into files */
+	/*Checks if the programs needs more memory then what allowed*/
+	if(IC+DC>MAX_MEMORY_SIZE)
+	{
+		_ERROR(3, TOO_MANY_WORDS, "-", current_filename);
+		error_counter++;
+	}
 	
+	/* write into files */	
+	if(!error_counter)
+	{
+		create_ob_file(file_name);
+		create_ext_file(file_name);
+		create_ent_file(file_name);
+	}
+
 	/* free images/table */
 	free_image(INSTRUCTION_TABLE_TYPE);
 	free_image(DATA_TABLE_TYPE);
 	free_symbol_table();
+	free_external_table();
 }
 
 
 /* first run is building the symbol table and calculate how many memory will be required
-	the number of error found will be returned
-	if no error - return 0 
+	also counts error if found any
 */
-int do_first_run(FILE * fd_input)
+void do_first_run(FILE * fd_input)
 {
-	int error_counter = 0, i = 0;
+	int i = ZERO;
 	int in_error;
-	int instruction_words = 0;
-	int current_line_number = 0;
+	int instruction_words = ZERO;
+	int current_line_number = ZERO;
 	char line[MAX_LINE_LENGTH];
 	char * chunk_of_line, * line_ptr;
 
@@ -105,7 +117,7 @@ int do_first_run(FILE * fd_input)
 				/* data directive label case */
 				if (is_data(chunk_of_line))
 				{
-					int number_of_elements = 0;
+					int number_of_elements = ZERO;
 
 					/* the rest of the line in chunk_of_line */
 					chunk_of_line = strtok(NULL, "\0");
@@ -127,7 +139,7 @@ int do_first_run(FILE * fd_input)
 						chunk_of_line = strtok(chunk_of_line, ",");
 
 						/* iterating over each data element and adding it to the data image */
-						for(i = 0; i < number_of_elements; i++)
+						for(i = ZERO; i < number_of_elements; i++)
 						{	
 							if (add_to_image(DATA_TABLE_TYPE, DC, atoi(chunk_of_line)) != ZERO)
 							{
@@ -167,7 +179,7 @@ int do_first_run(FILE * fd_input)
 						chunk_of_line[strlen(chunk_of_line) -1] = '\0';
 
 					/* iterating over every character */
-					for(i = 0 ; i < strlen(chunk_of_line) ; i++)
+					for(i = ZERO ; i < strlen(chunk_of_line) ; i++)
 					{
 						/* defining beginning and end of the string */
 						if (chunk_of_line[i] == '"')
@@ -205,7 +217,7 @@ int do_first_run(FILE * fd_input)
 						string = strtok(string, "\"");
 
 						/* iterating over each data element and adding it to the data image */
-						for(i = 0; i < (end_of_string - start_of_string -1); i++) /* -1 for the  '"' */
+						for(i = ZERO; i < (end_of_string - start_of_string -1); i++) /* -1 for the  '"' */
 						{	
 							if (add_to_image(DATA_TABLE_TYPE, DC, string[i]) != ZERO)
 							{
@@ -259,6 +271,8 @@ int do_first_run(FILE * fd_input)
 							 _ERROR(5, CANT_ADD_TO_SYMTABLE, "-", current_filename, ":", line_number_buffer );
 							error_counter++;
 						}
+
+
 					}	
 					else
 					{
@@ -328,7 +342,7 @@ int do_first_run(FILE * fd_input)
 			/* data directive case */
 			if (is_data(chunk_of_line))
 			{
-				int number_of_elements = 0;
+				int number_of_elements = ZERO;
 
 				/* the rest of the line in chunk_of_line */
 				chunk_of_line = strtok(NULL, "\0");
@@ -350,7 +364,7 @@ int do_first_run(FILE * fd_input)
 					chunk_of_line = strtok(chunk_of_line, ",");
 
 					/* iterating over each data element and adding it to the data image */
-					for(i = 0; i < number_of_elements; i++)
+					for(i = ZERO; i < number_of_elements; i++)
 					{	
 						if (add_to_image(DATA_TABLE_TYPE, DC, atoi(chunk_of_line)) != ZERO)
 						{
@@ -380,7 +394,7 @@ int do_first_run(FILE * fd_input)
 					chunk_of_line[strlen(chunk_of_line) -1] = '\0';
 
 				/* iterating over every character */
-				for(i = 0 ; i < strlen(chunk_of_line) ; i++)
+				for(i = ZERO ; i < strlen(chunk_of_line) ; i++)
 				{
 					/* defining beginning and end of the string */
 					if (chunk_of_line[i] == '"')
@@ -418,7 +432,7 @@ int do_first_run(FILE * fd_input)
 					string = strtok(string, "\"");
 
 					/* iterating over each data element and adding it to the data image */
-					for(i = 0; i < (end_of_string - start_of_string -1); i++) /* -1 for the  '"' */
+					for(i = ZERO; i < (end_of_string - start_of_string -1); i++) /* -1 for the  '"' */
 					{	
 						if (add_to_image(DATA_TABLE_TYPE, DC, string[i]) != ZERO)
 						{
@@ -462,6 +476,8 @@ int do_first_run(FILE * fd_input)
 						 _ERROR(5, CANT_ADD_TO_SYMTABLE, "-", current_filename, ":", line_number_buffer );
 						error_counter++;
 					}
+
+
 				}
 				else
 				{
@@ -508,5 +524,352 @@ int do_first_run(FILE * fd_input)
 	/* enhance the data symbols by IC */
 	add_IC_to_data_symbol();
 
-	return error_counter;
+}
+
+/* second run is building the Instruction table and calculate how many memory will be required for the program
+	also counts error if found any
+*/
+void do_second_run(FILE * fd_input)
+{
+	int i = ZERO;
+	int line_counter = ONE;
+	char line[MAX_LINE_LENGTH];
+	char * chunk_of_line, * line_ptr;
+	char * operation, * first_op, * second_op;
+	short int opcode=ZERO;
+	
+
+	IC=START_IC_VALUE;
+	/* setting fd pointer to the start of the file*/
+	fseek(fd_input, ZERO, SEEK_SET);
+	
+	/* read the file line by line until EOF */
+	while(fgets(line, MAX_LINE_LENGTH, fd_input))
+	{
+		first_op=NULL;
+		second_op=NULL;
+		
+		/* remove the first spaces of the line */
+		line_ptr = remove_leading_spaces(line);
+
+		/* remove last character if it is new line */
+		i = ZERO;
+		while(line[i] != '\0')
+		{
+			if (line[i] == '\n')
+			{
+				line[i] = '\0';
+				break;
+			}
+			i++;
+		}
+		
+		/* the first word of the line in chunk_of_line */
+		chunk_of_line = strtok(line_ptr, " " "\t");
+
+		/* check if comment or blank line */
+		if ((is_blank(chunk_of_line)) || is_comment(chunk_of_line))
+			; /* do nothing */
+		else
+		{
+			/* label case */
+			if (is_label(chunk_of_line)) 
+			{
+				/* the next word of the line in chunk_of_line */
+				chunk_of_line = strtok(NULL, "\0");
+				chunk_of_line = remove_leading_spaces(chunk_of_line);
+				chunk_of_line = strtok(chunk_of_line, " " "\t");
+			}
+
+			/* Directive case */
+			if (is_directive(chunk_of_line))
+			{
+				/* Entry case */
+				 if (is_entry(chunk_of_line))
+				{
+					/* the next word of the line in chunk_of_line */
+					chunk_of_line = strtok(NULL, "\0");
+					chunk_of_line = remove_leading_spaces(chunk_of_line);
+					chunk_of_line = strtok(chunk_of_line, " " "\t");
+					
+					/*Changing symbol location to entry*/
+					if(!symbol_to_entry(chunk_of_line))
+					{
+						/*if failed to change symbol location to entry*/
+						sprintf(line_number_buffer, "%d", line_counter);
+						_ERROR(5, CANT_FIND_SYMBOL , "-", current_filename, ":", line_number_buffer );
+						error_counter++;
+					}	
+				}
+			}
+			/* Instruction case */
+			else
+			{
+				/*Seperates each part of the Instruction*/
+				
+				/*Operation*/
+				operation = chunk_of_line;
+			
+				/*First Operand*/
+				chunk_of_line = strtok(NULL, "\0");
+				if(chunk_of_line!=NULL)
+				{
+					chunk_of_line = remove_leading_spaces(chunk_of_line);
+					chunk_of_line = strtok(chunk_of_line,"," " " "\t");
+					first_op = chunk_of_line;
+				}
+
+				/*Second Operand*/
+				chunk_of_line = strtok(NULL, "\0");
+				if(chunk_of_line!=NULL)
+				{
+					chunk_of_line = remove_leading_spaces(chunk_of_line);
+					chunk_of_line = strtok(chunk_of_line, " " "\t");
+					second_op = chunk_of_line;
+				}
+	
+				/*Start to Building opcode*/
+				if((opcode=operation_to_bin(operation))==ERR_RETURN_VAL)
+				{
+					sprintf(line_number_buffer, "%d", line_counter);
+					_ERROR(5, INVALID_INSTRUCTION , "-", current_filename, ":", line_number_buffer );
+					error_counter++;
+				}
+				
+					
+				/*Checks if both Operands have Value*/
+				if((first_op!=NULL)&&(second_op!=NULL))
+				{
+					/*Validation operands type for the operation*/
+					switch (opcode)
+					{
+						/*opcode = mov, add, sub*/
+						case 0:
+						case 2:
+						case 3:
+							if(is_a_number(second_op))
+							{
+								/*Error - Not a valid operand for the operation*/
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, INVALID_OPERAND , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+						
+						/*opcode = lea */
+						case 4:
+							if((is_a_number(second_op)) || ((is_a_number(first_op))) || (is_a_register(first_op))
+								|| (((first_op[0] == '*') && (is_a_register(strchr(first_op,'r'))))))
+							{
+								/*Error - Not a valid operand for the operation*/
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, INVALID_OPERAND , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+						
+						/*all the rest of the operations*/
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
+						case 10:
+						case 11:
+						case 12:
+						case 13:
+						case 14:
+						case 15:
+							/*Error - Too many operands for the operation*/
+							{
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, TOO_MANY_OPERANDS , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						default:
+						break;
+					
+					}
+
+
+					/*Checks if first Operand is a Register*/
+					if ((is_a_register(first_op)) || (((first_op[0] == '*') && (is_a_register(strchr(first_op,'r'))))))
+					{	
+
+						/*Checks if second Operand is a Register*/
+						if ((is_a_register(second_op)) || (((second_op[0] == '*') && (is_a_register(strchr(second_op,'r'))))))
+						{
+							
+							/*Checks if Operands starts with '*' to know what type of Addressing */
+							if((first_op[0] == '*')&&(second_op[0] == '*'))
+								bmc_for_two_op_two_reg(opcode,first_op,ADDRESSING_2,second_op,ADDRESSING_2);		
+							else if(first_op[0] == '*')
+								bmc_for_two_op_two_reg(opcode,first_op,ADDRESSING_2,second_op,ADDRESSING_3);
+							else if(second_op[0] == '*')
+								bmc_for_two_op_two_reg(opcode,first_op,ADDRESSING_3,second_op,ADDRESSING_2);
+							else
+								bmc_for_two_op_two_reg(opcode,first_op,ADDRESSING_3,second_op,ADDRESSING_3);
+						}
+						else /*Only first Operand is a Register*/
+						{
+							/*Checks if Operand starts with '*' to know what type of Addressing */
+							if(first_op[0] == '*')
+								bmc_for_two_op_one_reg(opcode,first_op,ADDRESSING_2,second_op, SRC_FLAG, line_counter);
+							else
+								bmc_for_two_op_one_reg(opcode,first_op,ADDRESSING_3,second_op, SRC_FLAG, line_counter);
+						}
+					
+					}
+					/*Only second Operand is a Register*/
+					else if ((is_a_register(second_op)) || (((second_op[0] == '*') && (is_a_register(strchr(second_op,'r'))))))
+					{
+						/*Checks if Operand starts with '*' to know what type of Addressing */
+						if(second_op[0] == '*')
+								bmc_for_two_op_one_reg(opcode,first_op,ADDRESSING_2,second_op, DES_FLAG, line_counter);
+							else
+								bmc_for_two_op_one_reg(opcode,first_op,ADDRESSING_3,second_op, DES_FLAG, line_counter);
+					}
+					else /*Both Operands are not registers*/
+					{
+						bmc_for_two_op_non_reg(opcode,first_op,second_op,line_counter);
+					}
+				}
+				/*Checks if Only the first Operand have Value*/
+				else if((first_op!=NULL)&&(second_op==NULL))
+				{
+
+					/*Validation operands type for the operation*/
+					switch (opcode)
+					{
+						/*opcode = clr, not, inc, dec, red*/
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 11:
+							if(is_a_number(first_op))
+							{
+								/*Error - Not a valid operand for the operation*/
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, INVALID_OPERAND , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+						
+						/*opcode = jmp, bne, jsr*/
+						case 9:
+						case 10:
+						case 13:
+							if(is_a_number(first_op)||is_a_register(first_op))
+							{
+								/*Error - Not a valid operand for the operation*/
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, INVALID_OPERAND , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+						
+						/*opcode = mov, cmp, add, sub, lea*/
+						case 0:
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+							/*Error - Missing an operand for the operation*/
+							{
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, MISSING_OPERANDS , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+
+						/*opcode = rts, stop*/
+						case 14:
+						case 15:
+							/*Error - Too many operands for the operation*/
+							{
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, TOO_MANY_OPERANDS , "-", current_filename, ":", line_counter );
+								error_counter++;
+							}
+						break;
+
+						default:
+						break;
+					}
+					
+					/*if operand is a register*/
+					if ((is_a_register(first_op)) || (((first_op[0] == '*') && (is_a_register(strchr(first_op,'r'))))))
+					{
+						if (is_a_register(first_op))
+							bmc_for_one_op(opcode,first_op,ADDRESSING_3);
+						else
+							bmc_for_one_op(opcode,first_op,ADDRESSING_2);
+					}
+					/*if operand is a symbol*/
+					else if (is_a_symbol(first_op)==-1)
+						bmc_for_one_op(opcode,first_op,ADDRESSING_1);
+
+					/*if operand is a number*/
+					else if (is_valid_number(first_op))
+					{
+						/*checks if the number exceeding limits of 12-bit number*/
+						if(is_num_in_limit(first_op))
+							bmc_for_one_op(opcode,first_op,ADDRESSING_0);
+						else
+						{
+							sprintf(line_number_buffer, "%d", line_counter);
+							_ERROR(5, NUMBER_REPRESENTATION_EXCEEDED_12BIN , "-", current_filename, ":", line_number_buffer );
+							error_counter++;
+						}
+					}
+					else
+					{
+						sprintf(line_number_buffer, "%d", line_counter);
+						_ERROR(5, UNKNOWN_OPERAND , "-", current_filename, ":", line_number_buffer );
+						error_counter++;
+					}
+				}
+				/*No Operands*/
+				else
+				{	
+					/*Validation operands type for the operation*/
+					switch (opcode)
+					{
+						
+						/*all operations but rts and stop*/
+						case 0:
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
+						case 10:
+						case 11:
+						case 12:
+						case 13:
+							/*Error - Too many operands for the operation*/
+							{
+								sprintf(line_number_buffer, "%d", line_counter);
+								_ERROR(5, MISSING_OPERANDS , "-", current_filename, ":", line_number_buffer );
+								error_counter++;
+							}
+						break;
+
+						default:
+						break;
+					}
+					bmc_for_no_op(opcode);
+				}
+			}
+		}
+		line_counter++;
+	}/*end of while loop*/
+
+	add_IC_to_data_image();
+
 }

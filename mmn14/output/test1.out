@@ -1,0 +1,12 @@
+ERROR - Invalid label name - input/test1.as : 24 
+ERROR - Symbol doesn't exist in symbol table - input/test1.as : 14 
+ERROR - Unknown operand - input/test1.as : 16 
+ERROR - Unknown operand - input/test1.as : 17 
+ERROR - Unknown operand - input/test1.as : 18 
+ERROR - Symbol doesn't exist in symbol table - input/test1.as : 19 
+ERROR - Too Many operands for the operation - input/test1.as : 26 
+ERROR - Invalid operand for the operation - input/test1.as : 28 
+ERROR - Number exceeded 12bin representation - input/test1.as : 30 
+ERROR - Number exceeded 12bin representation - input/test1.as : 32 
+ERROR - Too Many operands for the operation - input/test1.as : 34 
+ERROR - Unknown operand - input/test1.as : 34 

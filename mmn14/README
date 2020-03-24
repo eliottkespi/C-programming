@@ -1,0 +1,47 @@
+README - assembler
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Project written and maintained by:
+Ron Yehiav — 307956003
+Eliott Kespi  — 328954193
+
+As part of Open University "Labs in System Programming” formation — 20465 (2020a)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+This file relates all the important informations about the assembler project as part of MMN14.
+
+Files explanations:
+
+This project contains the following files:
+1. assembler.c - contains the main function
+2. assembler.assembler.c - contains the assembler related functions like do_assembler, do_first_run, do_second_run
+3. assembler_io_utils.c - contains all the functions related to input / output & text parsing
+4. assembler_files.c - contains all the functions to create the files as part of the assembling process 
+5. assembler_tables.c - contains all the tables related functions (Symbol table, Operation table and external table)
+6. assembler_images.c - contains all the images related functions (Data & Instruction images)
+7. assembler_logging.c - contains logging functions
+8. assembler.h - main header file of assembler program
+9. error.h - contain all the messages and errors definitions
+10. makefile
+11. input directory - contain example of assembly files (.as) and the assembled files created (.ob, *.ent, *.ext)
+12. output directory - contain the stdout of assembled files (pay attention that only test1.out is existing as test1.as is the only inputed file with errors - by purpose)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Example: 
+
+
+eliott@c-prog-vm:~/mmn14$ ./assembler input/from_mmn14 input/from_mmn14-2 input/test1 not_existing_file
+ERROR - Invalid label name - input/test1.as : 24
+ERROR - Symbol doesn't exist in symbol table - input/test1.as : 14
+ERROR - Unknown operand - input/test1.as : 16
+ERROR - Unknown operand - input/test1.as : 17
+ERROR - Unknown operand - input/test1.as : 18
+ERROR - Symbol doesn't exist in symbol table - input/test1.as : 19
+ERROR - Too Many operands for the operation - input/test1.as : 26
+ERROR - Invalid operand for the operation - input/test1.as : 28
+ERROR - Number exceeded 12bin representation - input/test1.as : 30
+ERROR - Number exceeded 12bin representation - input/test1.as : 32
+ERROR - Too Many operands for the operation - input/test1.as : 34
+ERROR - Unknown operand - input/test1.as : 34
+ERROR - Can't open file: not_existing_file.as No such file or directory
